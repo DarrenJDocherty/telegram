@@ -1,0 +1,11 @@
+RegisterServerEvent("Telegram:GetMessages")
+AddEventHandler("Telegram:GetMessages", function()
+	MySQL.Async.fetchAll("SELECT * FROM telegrams ORDER BY id DESC", {}, function(data)
+        TriggerClientEvent("Telegram:ReturnMessages", -1, data)
+	end)
+end)
+
+RegisterServerEvent("Telegram:SendMessage")
+AddEventHandler("Telegram:SendMessage", function(sender, message)
+	MySQL.Async.execute("INSERT INTO telegrams (sender, message) VALUES (@sender, @message)",  { ['@sender'] = sender, ['@message'] = message })
+end)
