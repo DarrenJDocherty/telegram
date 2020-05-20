@@ -1,7 +1,8 @@
 RegisterServerEvent("Telegram:GetMessages")
 AddEventHandler("Telegram:GetMessages", function()
+	local src = source
 	MySQL.Async.fetchAll("SELECT * FROM telegrams ORDER BY id DESC", {}, function(data)
-        TriggerClientEvent("Telegram:ReturnMessages", -1, data)
+        TriggerClientEvent("Telegram:ReturnMessages", src, data)
 	end)
 end)
 
