@@ -9,8 +9,7 @@ local menu = false
 -- Add your own location(s) to view telegrams here.
 
 local locations = {
-    { x=-275.183, y=796.919, z=118.816 },
-    { x=-276.260, y=805.332, z=119.380 },
+    { x=-275.183, y=796.919, z=118.816 }, --default: Valentine Sheriff
 }
 
 -----------------
