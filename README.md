@@ -4,6 +4,8 @@ A simple resource for RedM which allows players to send and receive telegrams.
 
 # Installation 
 
+This resource requires mysql-async to communicate with the database. You can download it here: https://github.com/amakuu/mysql-async-temporary/.
+
 - Extract telegrams into your resources folder
 - Import telegrams.sql into your database
 - Start the telegrams resource in your server.cfg
