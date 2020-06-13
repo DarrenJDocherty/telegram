@@ -4,13 +4,13 @@ A simple resource for RedM which allows players to send and receive telegrams.
 
 # Installation 
 
-This resource is dependant on the RedEM RP framework for authenticating moderators but can easily be configured to work as a standalone resource. You can download it here: https://github.com/RedEM-RP.
+This resource requires mysql-async to communicate with the database. You can download it here: https://github.com/amakuu/mysql-async-temporary/.
 
-- Extract Atomic into your resources folder
-- Start the Atomic resource in your server.cfg
-- In-game, use the "delete" key to open Atomic
+- Extract telegrams into your resources folder
+- Import telegrams.sql into your database
+- Start the telegrams resource in your server.cfg
 
-You can add new moderators by ammending the users group to "moderator" in the redemrp database. Edit line server of the server.lua file to manage which groups can access Atomic.
+You can add new locations where telegrams can be by amending the locations table in the client.lua file. 
 
 # License 
 
