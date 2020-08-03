@@ -2,6 +2,11 @@ local telegrams = {}
 local index = 1
 local menu = false
 
+-- move all telegrams to train stations
+-- send telegrams
+-- receive telegrams
+-- receive telegrams function as module possible
+
 -----------------
 --- Change Me ---
 -----------------
@@ -16,19 +21,40 @@ local locations = {
 --- Functions ---
 -----------------
 
+RegisterCommand("svg", function()
+    TriggerServerEvent("Telegram:GetMessages")
+end)
+
+RegisterNetEvent("Telegram:ReturnMessages")
+AddEventHandler("Telegram:ReturnMessages", function(data)
+    telegrams = data
+
+    if next(telegrams) == nil then
+        SetNuiFocus(true, true)
+        SendNUIMessage({ message = "No telegrams to display." })
+    else
+        SetNuiFocus(true, true)
+        SendNUIMessage({ sender = telegrams[index].sender, message = telegrams[index].message })
+    end
+end)
+
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(1)
 
         for key, value in pairs(locations) do
-            if IsPlayerNearCoords(value.x, value.y, value.z) then
+           if IsPlayerNearCoords(value.x, value.y, value.z) then
                 if not menu then
-                    DrawText("Press X to view recent telegraphs.",0.5,0.88)
+                  --  DrawText("Press X to view recent telegraphs.",0.5,0.88)
                     if IsControlJustReleased(0, 0x8CC9CD42) then
                         TriggerServerEvent("Telegram:GetMessages")
                     end
                 end
             end
+        end
+
+        if IsControlJustReleased(0, 0x8CC9CD42) then
+            TriggerServerEvent("Telegram:GetMessages")
         end
     end
 end)
@@ -51,30 +77,12 @@ function DrawText(text,x,y)
     DisplayText(CreateVarString(10, "LITERAL_STRING", text), x, y)
 end
 
-function OpenTelegram()
-    menu = true
-    SetNuiFocus(true, true)
-    SendNUIMessage({ display = true, message = telegrams[index].message })
-end
-
 function CloseTelegram()
     index = 1
     menu = false
     SetNuiFocus(false, false)
-    SendNUIMessage({ display = false })
+    SendNUIMessage({})
 end
-
-RegisterNetEvent("Telegram:ReturnMessages")
-AddEventHandler("Telegram:ReturnMessages", function(data)
-    telegrams = data
-
-    if next(telegrams) == nil then
-        SetNuiFocus(true, true)
-        SendNUIMessage({ display = true, message = "No telegrams to display." })
-    else
-        OpenTelegram()
-    end
-end)
 
 -----------------
 --- Callbacks ---
@@ -83,14 +91,14 @@ end)
 RegisterNUICallback('back', function()
     if index > 1 then
         index = index - 1
-        SendNUIMessage({ display = true, message = telegrams[index].message })
+        SendNUIMessage({ sender = telegrams[index].sender, message = telegrams[index].message })
     end
 end)
 
 RegisterNUICallback('next', function()
     if index < #telegrams then
         index = index + 1
-        SendNUIMessage({ display = true, message = telegrams[index].message })
+        SendNUIMessage({ sender = telegrams[index].sender, message = telegrams[index].message })
     end
 end)
 
@@ -100,17 +108,88 @@ end)
 
 RegisterNUICallback('new', function()
     CloseTelegram()
+    GetFirstname()
+end)
 
-    DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP1", "", "", "", "", "", 175)
+--[[
+if (GetOnscreenKeyboardResult()) then
+    TriggerServerEvent("Telegram:SendMessage", GetPlayerName(GetPlayerPed(-1)), GetOnscreenKeyboardResult())
+end
+]]
+
+function GetFirstname()
+    AddTextEntry("FMMC_KEY_TIP8", "Recipient's Firstname: ")
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", "", "", "", "", 30)
 
     while (UpdateOnscreenKeyboard() == 0) do
         Wait(0);
     end
+
     while (UpdateOnscreenKeyboard() == 2) do
         Wait(0);
         break
     end
-    if (GetOnscreenKeyboardResult()) then
-        TriggerServerEvent("Telegram:SendMessage", GetPlayerName(GetPlayerPed(-1)), GetOnscreenKeyboardResult())
+
+    while (UpdateOnscreenKeyboard() == 1) do
+        Wait(0)
+        if (GetOnscreenKeyboardResult()) then
+            local firstname = GetOnscreenKeyboardResult()
+
+            GetLastname(firstname)
+
+            break
+        end
     end
-end)
+end
+
+function GetLastname(firstname)
+    AddTextEntry("FMMC_KEY_TIP8", "Recipient's Lastname: ")
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", "", "", "", "", 30)
+
+    while (UpdateOnscreenKeyboard() == 0) do
+        Wait(0);
+    end
+
+    while (UpdateOnscreenKeyboard() == 2) do
+        Wait(0);
+        break
+    end
+
+    while (UpdateOnscreenKeyboard() == 1) do
+        Wait(0)
+        if (GetOnscreenKeyboardResult()) then
+            local lastname = GetOnscreenKeyboardResult()
+
+            GetMessage(firstname, lastname)
+
+            break
+        end
+    end
+end
+
+function GetMessage(firstname, lastname)
+    AddTextEntry("FMMC_KEY_TIP8", "Message: ")
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TIP8", "", "", "", "", "", 150)
+
+    while (UpdateOnscreenKeyboard() == 0) do
+        Wait(0);
+    end
+
+    while (UpdateOnscreenKeyboard() == 2) do
+        Wait(0);
+        break
+    end
+
+    while (UpdateOnscreenKeyboard() == 1) do
+        Wait(0)
+        if (GetOnscreenKeyboardResult()) then
+            local message = GetOnscreenKeyboardResult()
+
+            print(firstname, lastname, message)
+            
+            TriggerServerEvent("Telegram:SendMessage", firstname, lastname, message)
+           
+            break
+        end
+    end
+end
