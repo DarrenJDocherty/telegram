@@ -1,9 +1,19 @@
 window.addEventListener('message', (event) => {
-    if (event.data.display === true) {
-        $('.telegram').html(event.data.message);
-		$("*").show();
-    } else {
-		$("*").hide();
+	var telegram = event.data
+
+	if (telegram.message == null) {
+		$("body").hide();
+		console.log("Null")
+	} else if (telegram.message == "No telegrams to display.") {
+		console.log(telegram.message)
+		$("body").show();
+		$('.telegram_message').html(telegram.message);
+	} else {
+		console.log(telegram.sender)
+		console.log(telegram.message)
+		$("body").show();
+		$('.telegram_sender').html(telegram.sender);
+		$('.telegram_message').html(telegram.message);
 	}
 
 	$(".telegram_back_button").unbind().click(function(){
@@ -23,6 +33,11 @@ window.addEventListener('message', (event) => {
 
 	$(".telegram_close_button").unbind().click(function(){
 		$.post('http://telegram/close', JSON.stringify({})
+	  );
+	});
+	
+	$(".telegram_delete_button").unbind().click(function(){
+		$.post('http://telegram/delete', JSON.stringify({})
 	  );
 	});
 });
