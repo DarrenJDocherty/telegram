@@ -14,6 +14,7 @@ local locations = {
 
 RegisterNetEvent("Telegram:ReturnMessages")
 AddEventHandler("Telegram:ReturnMessages", function(data)
+    index = 1
     telegrams = data
 
     if next(telegrams) == nil then
