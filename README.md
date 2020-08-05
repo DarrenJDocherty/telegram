@@ -12,6 +12,11 @@ This resource requires mysql-async to communicate with the database. You can dow
 
 You can add new locations where telegrams can be by amending the locations table in the client.lua file. 
 
-# License 
+# Changelog
 
-Darren Docherty (alias Troye) is the only owner of this script. You are free to use and edit the source code as you want for personal use. Any issues, reach out on Discord: Troye#7375.
+**Version 1.1 - 05/08/2020**
+
+- Added direct message like behaviour
+  - Telegrams now go direct to the player and are not visible to everyone
+- Added a delete button for deleting old telegrams
+- Added notification when a new telegram is received
