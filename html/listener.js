@@ -1,5 +1,5 @@
 window.addEventListener('message', (event) => {
-	var telegram = event.data 
+	var telegram = event.data
 
 	if (telegram.message == null) {
 		$("body").hide();
@@ -12,10 +12,10 @@ window.addEventListener('message', (event) => {
 		console.log(telegram.sender)
 		console.log(telegram.message)
 		$("body").show();
-		$('.telegram_sender').html("Troye Hamilton");
+		$('.telegram_sender').html(telegram.sender);
 		$('.telegram_message').html(telegram.message);
 	}
-	
+
 	$(".telegram_back_button").unbind().click(function(){
 		$.post('http://telegram/back', JSON.stringify({})
 	  );
@@ -35,8 +35,9 @@ window.addEventListener('message', (event) => {
 		$.post('http://telegram/close', JSON.stringify({})
 	  );
 	});
+	
+	$(".telegram_delete_button").unbind().click(function(){
+		$.post('http://telegram/delete', JSON.stringify({})
+	  );
+	});
 });
-
-function Post(endpoint, data) {
-	$.post('http://' + resource + '/' + endpoint + '', JSON.stringify(data))
-}

@@ -2,28 +2,15 @@ local telegrams = {}
 local index = 1
 local menu = false
 
--- move all telegrams to train stations
--- send telegrams
--- receive telegrams
--- receive telegrams function as module possible
-
------------------
---- Change Me ---
------------------
-
--- Add your own location(s) to view telegrams here.
+------------------------------------
+--- ADD YOUR OWN LOCATIONS BELOW ---
+------------------------------------
 
 local locations = {
-    { x=-276.260, y=805.332, z=119.380 }, --default: Valentine Sheriff
+    { x=-178.90, y=626.71, z=114.09 }, -- Valentine train station
+    { x=1225.57, y=-1293.87, z=76.91 }, -- Rhodes train station
+    { x=2731.55, y=-1402.37, z=46.18 }, -- Saint Denis train station
 }
-
------------------
---- Functions ---
------------------
-
-RegisterCommand("svg", function()
-    TriggerServerEvent("Telegram:GetMessages")
-end)
 
 RegisterNetEvent("Telegram:ReturnMessages")
 AddEventHandler("Telegram:ReturnMessages", function(data)
@@ -45,16 +32,13 @@ Citizen.CreateThread(function()
         for key, value in pairs(locations) do
            if IsPlayerNearCoords(value.x, value.y, value.z) then
                 if not menu then
-                  --  DrawText("Press X to view recent telegraphs.",0.5,0.88)
-                    if IsControlJustReleased(0, 0x8CC9CD42) then
+                    DrawText("Press G to view your telegrams.", 0.5, 0.88)
+                    if IsControlJustReleased(0, 0x760A9C6F) then
+                        menu = true
                         TriggerServerEvent("Telegram:GetMessages")
                     end
                 end
             end
-        end
-
-        if IsControlJustReleased(0, 0x8CC9CD42) then
-            TriggerServerEvent("Telegram:GetMessages")
         end
     end
 end)
@@ -84,10 +68,6 @@ function CloseTelegram()
     SendNUIMessage({})
 end
 
------------------
---- Callbacks ---
------------------
-
 RegisterNUICallback('back', function()
     if index > 1 then
         index = index - 1
@@ -111,11 +91,9 @@ RegisterNUICallback('new', function()
     GetFirstname()
 end)
 
---[[
-if (GetOnscreenKeyboardResult()) then
-    TriggerServerEvent("Telegram:SendMessage", GetPlayerName(GetPlayerPed(-1)), GetOnscreenKeyboardResult())
-end
-]]
+RegisterNUICallback('delete', function()
+    TriggerServerEvent("Telegram:DeleteMessage", telegrams[index].id)
+end)
 
 function GetFirstname()
     AddTextEntry("FMMC_KEY_TIP8", "Recipient's Firstname: ")
@@ -187,9 +165,21 @@ function GetMessage(firstname, lastname)
 
             print(firstname, lastname, message)
             
-            TriggerServerEvent("Telegram:SendMessage", firstname, lastname, message)
+            TriggerServerEvent("Telegram:SendMessage", firstname, lastname, message, GetPlayerServerIds())
            
             break
         end
     end
+end
+
+function GetPlayerServerIds()
+    local players = {}
+
+    for i = 0, 31 do
+        if NetworkIsPlayerActive(i) then
+            table.insert(players, GetPlayerServerId(i))
+        end
+    end
+
+    return players
 end
