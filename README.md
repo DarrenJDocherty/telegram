@@ -17,6 +17,14 @@ A simple resource for RedM which allows players to send and receive telegrams.
 
 You can add new locations where telegrams can be by amending the locations table in the client.lua file. 
 
+**VORPCore**
+
+Do you use VORP core instead of RedemRP? Open the server.lua file and set redemrp equal to false on the first line.
+
+```
+local redemrp = false
+```
+
 # Changelog
 
 **Version 1.1 - 05/08/2020**
