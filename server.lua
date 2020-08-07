@@ -23,7 +23,7 @@ AddEventHandler("Telegram:GetMessages", function(src)
 		TriggerEvent("vorp:getCharacter", _source, function(user)
 			local recipient = user.identifier
 			
-			MySQL.Async.fetchAll("SELECT * FROM telegrams WHERE recipient=@recipient ORDER BY id DESC", { ['@recipient'] = recipient }, function(result)
+			exports.ghmattimysql:execute("SELECT * FROM telegrams WHERE recipient=@recipient ORDER BY id DESC", { ['@recipient'] = recipient }, function(result)
 				TriggerClientEvent("Telegram:ReturnMessages", _source, result)
 			end)
 		end)
@@ -69,32 +69,31 @@ AddEventHandler("Telegram:SendMessage", function(firstname, lastname, message, p
 	else 
 		TriggerEvent("vorp:getCharacter", _source, function(user)
 			local sender = user.firstname .. " " .. user.lastname
-			
-			MySQL.Async.fetchAll("SELECT identifier FROM characters WHERE firstname=@firstname AND lastname=@lastname", { ['@firstname'] = firstname, ['@lastname'] = lastname}, function(result)
+
+			exports.ghmattimysql:execute("SELECT identifier FROM characters WHERE firstname=@firstname AND lastname=@lastname", { ['@firstname'] = firstname, ['@lastname'] = lastname}, function(result)
 				if result[1] then 
 					local recipient = result[1].identifier 
 
 					local paramaters = { ['@sender'] = sender, ['@recipient'] = recipient, ['@recipientid'] = 1, ['@message'] = message }
 
-					MySQL.Async.execute("INSERT INTO telegrams (sender, recipient, recipientid, message) VALUES (@sender, @recipient, @recipientid, @message)",  paramaters, function(count)
+					exports.ghmattimysql:execute("INSERT INTO telegrams (sender, recipient, recipientid, message) VALUES (@sender, @recipient, @recipientid, @message)",  paramaters, function(count)
 						if count > 0 then 
 							for k, v in pairs(players) do
 								TriggerEvent("vorp:getCharacter", v, function(user)
 									local receiver = user.firstname .. " " ..user.lastname
 
 									if receiver == firstname .. " " .. lastname then 
-										TriggerClientEvent("redemrp_notification:start", _source, "You've received a telegram.", 3)
+										TriggerClientEvent("vorp:Tip", _source, "You've received a telegram.", 3000)
 									end
 								end)
 							end
 						else 
-							TriggerClientEvent("redemrp_notification:start", _source, "We're unable to process your Telegram right now. Please try again later.", 3)
+							TriggerClientEvent("vorp:Tip", _source, "We're unable to process your Telegram right now. Please try again later.", 3000)
 						end
 					end)
-
-					TriggerClientEvent("redemrp_notification:start", _source, "Your telegram has been posted", 3)
+					TriggerClientEvent("vorp:Tip", _source, "Your telegram has been posted!", 3000)
 				else 
-					TriggerClientEvent("redemrp_notification:start", _source, "Unable to process Telegram. Invalid first or lastname.", 3)
+					TriggerClientEvent("vorp:Tip", _source, "Unable to process Telegram. Invalid first or lastname.", 3000)
 				end
 			end)
 		end)
@@ -105,11 +104,21 @@ RegisterServerEvent("Telegram:DeleteMessage")
 AddEventHandler("Telegram:DeleteMessage", function(id)
 	local _source = source
 
-	MySQL.Async.execute("DELETE FROM telegrams WHERE id=@id",  { ['@id'] = id }, function(count)
-		if count > 0 then 
-			TriggerEvent("Telegram:GetMessages", _source)
-		else
-			TriggerClientEvent("redemrp_notification:start", _source, "We're unable to delete your Telegram right now. Please try again later.", 3)
-		end
-	end)
+	if redemrp then 
+		MySQL.Async.execute("DELETE FROM telegrams WHERE id=@id",  { ['@id'] = id }, function(count)
+			if count > 0 then 
+				TriggerEvent("Telegram:GetMessages", _source)
+			else
+				TriggerClientEvent("redemrp_notification:start", _source, "We're unable to delete your Telegram right now. Please try again later.", 3)
+			end
+		end)
+	else 
+		exports.ghmattimysql:execute("DELETE FROM telegrams WHERE id=@id",  { ['@id'] = id }, function(count)
+			if count > 0 then 
+				TriggerEvent("Telegram:GetMessages", _source)
+			else
+				TriggerClientEvent("vorp:Tip", _source, "We're unable to delete your Telegram right now. Please try again later.", 3000)
+			end
+		end)
+	end
 end)
