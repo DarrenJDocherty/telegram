@@ -27,6 +27,10 @@ local redemrp = false
 
 # Changelog
 
+**Version 1.2 - 07/08/2020**
+
+- Added support for the VORP framework
+
 **Version 1.1 - 05/08/2020**
 
 - Added direct message like behaviour
