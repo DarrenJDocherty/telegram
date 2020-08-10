@@ -76,19 +76,15 @@ AddEventHandler("Telegram:SendMessage", function(firstname, lastname, message, p
 
 					local paramaters = { ['@sender'] = sender, ['@recipient'] = recipient, ['@recipientid'] = 1, ['@message'] = message }
 
-					exports.ghmattimysql:execute("INSERT INTO telegrams (sender, recipient, recipientid, message) VALUES (@sender, @recipient, @recipientid, @message)",  paramaters, function(count)
-						if count > 0 then 
-							for k, v in pairs(players) do
-								TriggerEvent("vorp:getCharacter", v, function(user)
-									local receiver = user.firstname .. " " ..user.lastname
+					exports.ghmattimysql:execute("INSERT INTO telegrams (sender, recipient, recipientid, message) VALUES (@sender, @recipient, @recipientid, @message)",  paramaters, function()
+						for k, v in pairs(players) do
+							TriggerEvent("vorp:getCharacter", v, function(user)
+								local receiver = user.firstname .. " " ..user.lastname
 
-									if receiver == firstname .. " " .. lastname then 
-										TriggerClientEvent("vorp:Tip", _source, "You've received a telegram.", 3000)
-									end
-								end)
-							end
-						else 
-							TriggerClientEvent("vorp:Tip", _source, "We're unable to process your Telegram right now. Please try again later.", 3000)
+								if receiver == firstname .. " " .. lastname then 
+									TriggerClientEvent("vorp:Tip", _source, "You've received a telegram.", 3000)
+								end
+							end)
 						end
 					end)
 					TriggerClientEvent("vorp:Tip", _source, "Your telegram has been posted!", 3000)
@@ -113,12 +109,8 @@ AddEventHandler("Telegram:DeleteMessage", function(id)
 			end
 		end)
 	else 
-		exports.ghmattimysql:execute("DELETE FROM telegrams WHERE id=@id",  { ['@id'] = id }, function(count)
-			if count > 0 then 
-				TriggerEvent("Telegram:GetMessages", _source)
-			else
-				TriggerClientEvent("vorp:Tip", _source, "We're unable to delete your Telegram right now. Please try again later.", 3000)
-			end
+		exports.ghmattimysql:execute("DELETE FROM telegrams WHERE id=@id",  { ['@id'] = id }, function()
+			TriggerEvent("Telegram:GetMessages", _source)
 		end)
 	end
 end)
