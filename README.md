@@ -6,8 +6,7 @@ A simple resource for RedM which allows players to send and receive telegrams.
 
 **Dependencies**
 
-- [RedEM-RP](https://github.com/RedEM-RP/redem_roleplay)
-- [MySQL-Async](https://github.com/amakuu/mysql-async-temporary/)
+- [RedEM-RP](https://github.com/RedEM-RP/redem_roleplay) OR [VORP-Core](https://github.com/VORPCORE/VORP-Core)
 
 **Instructions**
 
