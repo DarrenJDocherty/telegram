@@ -51,7 +51,7 @@ AddEventHandler("Telegram:SendMessage", function(firstname, lastname, message, p
 							for k, v in pairs(players) do
 								TriggerEvent('redemrp:getPlayerFromId', v, function(user)
 									if user.getName() == firstname .. " " .. lastname then 
-										TriggerClientEvent("redemrp_notification:start", _source, "You've received a telegram.", 3)
+										TriggerClientEvent("redemrp_notification:start", v, "You've received a telegram.", 3)
 									end
 								end)
 							end
@@ -82,7 +82,7 @@ AddEventHandler("Telegram:SendMessage", function(firstname, lastname, message, p
 								local receiver = user.firstname .. " " ..user.lastname
 
 								if receiver == firstname .. " " .. lastname then 
-									TriggerClientEvent("vorp:Tip", _source, "You've received a telegram.", 3000)
+									TriggerClientEvent("vorp:Tip", v, "You've received a telegram.", 3000)
 								end
 							end)
 						end
