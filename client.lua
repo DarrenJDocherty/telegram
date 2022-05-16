@@ -45,10 +45,8 @@ Citizen.CreateThread(function()
 end)
 
 function IsPlayerNearCoords(x, y, z)
-    local playerx, playery, playerz = table.unpack(GetEntityCoords(GetPlayerPed(), 0))
-    local distance = GetDistanceBetweenCoords(playerx, playery, playerz, x, y, z, true)
-
-    if distance < 1 then
+    local distance = GetDistanceBetweenCoords(x, y, z, GetEntityCoords(PlayerPedId()), false)
+    if distance < 3 then
         return true
     end
 end
